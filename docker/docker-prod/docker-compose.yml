@@ -1,0 +1,30 @@
+version: '3.4'
+services:
+ composer-and-npm-runner:
+  image: system-composer-and-npm-runner-prod:hot
+  build:
+   context: ../../
+   dockerfile: ./docker/docker-prod/composer-and-npm-runner.Dockerfile
+   cache_from:
+    - system-composer-and-npm-runner-prod:hot
+ app:
+  image: system-app-prod:hot
+  build:
+   context: ../../
+   dockerfile: ./docker/docker-prod/app.Dockerfile
+   cache_from:
+    - system-app-prod:hot
+ static:
+  image: system-static-prod:hot
+  build:
+   context: ../../
+   dockerfile: ./docker/docker-prod/static.Dockerfile
+   cache_from:
+    - system-static-prod:hot
+ proxy:
+  image: system-proxy-prod:hot
+  build:
+   context: ../../
+   dockerfile: ./docker/docker-prod/proxy.Dockerfile
+   cache_from:
+    - system-proxy-prod:hot
