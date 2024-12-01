@@ -116,9 +116,6 @@ class ConcessionController extends Controller
     public function destroy($id)
     {
         try {
-            $concession = $this->concessionRepository->findById($id);
-            Storage::disk('public')->delete($concession->image);
-
             $this->concessionRepository->delete($id);
             return response()->json(['message' => 'Concession deleted successfully!'], 200);
         } catch (\Throwable $th) {

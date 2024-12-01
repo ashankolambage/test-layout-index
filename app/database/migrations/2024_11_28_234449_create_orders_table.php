@@ -10,10 +10,12 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->json('concessions');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->string('status')->default('Pending');
             $table->timestamp('send_to_kitchen_time');
-            $table->enum('status', ['Pending', 'In-Progress', 'Completed'])->default('Pending');
+            $table->decimal('total_cost', 8, 2)->default(0);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 

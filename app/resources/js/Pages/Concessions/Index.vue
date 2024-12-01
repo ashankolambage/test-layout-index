@@ -3,7 +3,7 @@
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Concessions</h2>
+            <h2 class="font-semibold text-3xl text-gray-800 leading-tight">Concessions</h2>
         </template>
 
         <div class="py-12">
@@ -70,11 +70,6 @@ export default {
     },
 
     methods: {
-        deleteConcession(id) {
-            if (confirm('Are you sure you want to delete this concession?')) {
-                this.$inertia.delete(route('concessions.destroy', id));
-            }
-        },
         async deleteConcession(id) {
             const result = await Swal.fire({
                 title: 'Are you sure?',
