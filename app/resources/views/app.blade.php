@@ -10,6 +10,21 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
+        @php
+            $fileSystem = config('filesystems.default');
+            $baseImageUrl = config('app.baseImageUrlLocal');
+
+            if ($fileSystem == "s3") {
+                $baseImageUrl = config('app.baseImageUrlS3');
+            }
+        @endphp
+
+        <script>
+            window.appConfig = {
+                baseImageUrl: '{{ $baseImageUrl }}',
+            };
+        </script>
+
         <!-- Scripts -->
         @routes
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
