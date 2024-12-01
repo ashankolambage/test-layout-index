@@ -18,6 +18,17 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+
+    /*
+    |--------------------------------------------------------------------------
+    | Custome Configuration
+    |--------------------------------------------------------------------------
+    |
+    */
+
+    'baseImageUrlLocal' => env('BASE_IMAGE_URL_LOCAL', 'http://localhost:8000/'),
+    'baseImageUrlS3' => env('BASE_IMAGE_URL_S3'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment
@@ -168,6 +179,7 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        App\Providers\RepositoryServiceProvider::class,
     ])->toArray(),
 
     /*
