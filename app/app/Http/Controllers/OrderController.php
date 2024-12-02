@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Constants\OrderStatus;
 use App\Repositories\Interfaces\ConcessionRepositoryInterface;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
+use Carbon\Carbon;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -94,10 +95,40 @@ class OrderController extends Controller
     {
         $order = $this->orderRepository->findById($id)
         ->load(['concessions' => function($query) {
-            $query->withPivot('quantity', 'price');
+            $query->withPivot('quantity', 'price')->withTrashed();
         }]);
 
         return Inertia::render('Orders/View', ['order' => $order]);
+    }
+
+    public function update(Request $request, $id)
+    {
+        try {
+            $order = $this->orderRepository->findById($id);
+            
+            if (!$order) {
+                Log::error('Error updating order status: Order not found.');
+                return response()->json(['error' => 'Order not found.'], 404);
+            }
+
+            $newStatus = $request->input('status');
+            if (!in_array($newStatus, OrderStatus::getAllowedStatuses())) {
+                Log::error('Error updating order status: Invalid status provided.');
+                return response()->json(['error' => 'Invalid status provided.'], 400);
+            }
+
+            if ($newStatus === 'In Progress') {
+                $order->send_to_kitchen_time = Carbon::now('Asia/Kolkata');
+            }
+
+            $order->status = $newStatus; 
+            $order->save();
+
+            return response()->json(['message' => 'Order updated successfully!'], 200);
+        } catch (\Throwable $th) {
+            Log::error('Error updating order: ' . $th->getMessage());
+            return response()->json(['error' => 'An error occurred while updating the order.'], 500);
+        }
     }
 
     public function destroy($id)
@@ -109,5 +140,21 @@ class OrderController extends Controller
             Log::error('Error deleting order: ' . $th->getMessage());
             return response()->json(['error' => 'An error occurred while deleting the order.'], 500);
         }
+    }
+
+    public function kitchenIndex()
+    {
+        $orders = $this->orderRepository->getAll(['status' => 'In Progress']);
+        return Inertia::render('Kitchen/Index', ['orders' => $orders]);
+    }
+
+    public function kitchenOrderview($id)
+    {
+        $order = $this->orderRepository->findById($id)
+        ->load(['concessions' => function($query) {
+            $query->withPivot('quantity', 'price')->withTrashed();
+        }]);
+
+        return Inertia::render('Kitchen/View', ['order' => $order]);
     }
 }

@@ -14,9 +14,15 @@ class OrderRepository implements OrderRepositoryInterface
         $this->model = $order;
     }
 
-    public function getAll()
+    public function getAll(array $filters = [])
     {
-        return $this->model->all();
+        $query = $this->model->query();
+
+        if (isset($filters['status'])) {
+            $query->where('status', $filters['status']);
+        }
+
+        return $query->get();
     }
 
     public function findById($id)

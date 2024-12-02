@@ -2,7 +2,7 @@
   <AuthenticatedLayout>
     <template #header>
       <h2 class="font-semibold text-3xl text-gray-800 leading-tight">
-        Order Details - Order #{{ order.id }}
+        Kitchen Order Details - Order #{{ order.id }}
       </h2>
     </template>
 
@@ -11,11 +11,11 @@
         <div class="bg-white shadow-sm rounded-lg overflow-hidden">
           <div class="p-6">
             <div class="flex justify-between items-center mb-4">
-              <a v-if="order.status == 'Pending'" @click="sendToKitchen(order.id)" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
-                Send to Kitchen Now
+              <a v-if="order.status == 'In Progress'" @click="markAsCompleted(order.id)" style="cursor: pointer;" class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                Mark As Completed
               </a>
 
-              <a :href="route('orders.index')" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 ml-auto">
+              <a :href="route('kitchen.index')" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 ml-auto">
                 Back to Orders
               </a>
             </div>
@@ -86,21 +86,21 @@ export default {
         };
     },
     methods: {
-      async sendToKitchen(orderId) {
+      async markAsCompleted(orderId) {
             try {
                 const result = await Swal.fire({
                     title: 'Are you sure?',
-                    text: 'Do you want to send this order to kitchen now?',
+                    text: 'Do you want to mark this order as completed?',
                     icon: 'warning',
                     showCancelButton: true,
                     confirmButtonColor: '#3085d6',
                     cancelButtonColor: '#d33',
-                    confirmButtonText: 'Yes, send to kitchen now!',
+                    confirmButtonText: 'Yes, mark as completed!',
                 });
 
                 if (result.isConfirmed) {
                   const response = await axios.post(`/orders/${orderId}`, {
-                        status: 'In Progress',
+                        status: 'Completed',
                     });
 
                     this.$toast.fire({
@@ -108,7 +108,7 @@ export default {
                         title: response.data.message,
                     });
 
-                    this.order.status = 'In Progress';
+                    this.order.status = 'Completed';
                 }
             } catch (error) {
               if (error.response) {
