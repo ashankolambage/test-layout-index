@@ -75,14 +75,27 @@ import Swal from 'sweetalert2';
 
 <script>
 export default {
-    props: {
-        orders: Array,
-    },
     data() {
         return {
+            orders: [],
         };
     },
+    mounted() {
+        this.fetchOrders();
+        this.interval = setInterval(this.fetchOrders, 2000);
+    },
+    beforeUnmount() {
+        clearInterval(this.interval);
+    },
     methods: {
+      async fetchOrders() {
+            try {
+                const response = await axios.get(route('orders.fetch'));
+                this.orders = response.data.orders;
+            } catch (error) {
+                console.error("Error fetching orders:", error);
+            }
+      },
       async deleteOrder(id) {
             const result = await Swal.fire({
                 title: 'Are you sure?',
@@ -104,7 +117,7 @@ export default {
                         title: response.data.message,
                     });
 
-                    this.$inertia.visit(route('orders.index'));
+                    this.fetchOrders();
                 } catch (error) {
                     if (error.response) {
                         this.$toast.fire({
@@ -143,7 +156,7 @@ export default {
                         title: response.data.message,
                     });
 
-                    this.$inertia.visit(route('orders.index'));
+                    this.fetchOrders();
                 }
             } catch (error) {
               if (error.response) {

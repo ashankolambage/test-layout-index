@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Constants\OrderStatus;
+use App\Jobs\UpdateOrderStatus;
 use App\Repositories\Interfaces\ConcessionRepositoryInterface;
 use App\Repositories\Interfaces\OrderRepositoryInterface;
 use Carbon\Carbon;
@@ -41,7 +42,7 @@ class OrderController extends Controller
                 'concessions' => 'required|array',
                 'concessions.*.concession_id' => 'exists:concessions,id',
                 'concessions.*.quantity' => 'required|integer|min:1',
-                'send_to_kitchen_time' => 'required|date|after_or_equal:' . now()->addMinutes(330)->toDateTimeString(), 
+                'send_to_kitchen_time' => 'required|date|after_or_equal:' . now()->toDateTimeString(), 
             ]);
 
             if ($validator->fails()) {
@@ -84,6 +85,11 @@ class OrderController extends Controller
                 }
             }
 
+            $sendToKitchenTime = Carbon::parse($request->input('send_to_kitchen_time'));
+            $delay = $sendToKitchenTime->diffInSeconds(now());
+
+            UpdateOrderStatus::dispatch($order->id, $request->send_to_kitchen_time)->delay(now()->addSeconds($delay));
+
             return response()->json(['message' => 'Order created successfully!'], 200);
         } catch (\Throwable $th) {
             Log::error('Error creating order: ' . $th->getMessage());
@@ -118,11 +124,13 @@ class OrderController extends Controller
             }
 
             if ($newStatus === 'In Progress') {
-                $order->send_to_kitchen_time = Carbon::now('Asia/Kolkata');
+                $order->send_to_kitchen_time = Carbon::now();
             }
 
             $order->status = $newStatus; 
             $order->save();
+
+            event(new \App\Events\OrderSentToKitchen($order));
 
             return response()->json(['message' => 'Order updated successfully!'], 200);
         } catch (\Throwable $th) {
@@ -144,8 +152,7 @@ class OrderController extends Controller
 
     public function kitchenIndex()
     {
-        $orders = $this->orderRepository->getAll(['status' => 'In Progress']);
-        return Inertia::render('Kitchen/Index', ['orders' => $orders]);
+        return Inertia::render('Kitchen/Index');
     }
 
     public function kitchenOrderview($id)
@@ -156,5 +163,20 @@ class OrderController extends Controller
         }]);
 
         return Inertia::render('Kitchen/View', ['order' => $order]);
+    }
+
+    public function fetchOrders(Request $request)
+    {
+        $status = $request->query('status');
+
+        if ($status) {
+            $orders = $this->orderRepository->getAll(['status' => $status]);
+        } else {
+            $orders = $this->orderRepository->getAll();
+        }
+    
+        return response()->json([
+            'orders' => $orders
+        ]);
     }
 }
