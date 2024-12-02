@@ -4,21 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Order extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        'concessions',
-        'send_to_kitchen_time',
+        'user_id',
         'status',
+        'send_to_kitchen_time',
+        'total_cost',
     ];
 
-    protected $casts = [
-        'concessions' => 'array',
-        'send_to_kitchen_time' => 'datetime',
-    ];
+    protected $dates = ['deleted_at'];
 
     public function concessions()
     {

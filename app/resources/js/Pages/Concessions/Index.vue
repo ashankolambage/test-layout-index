@@ -3,53 +3,54 @@
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">Concessions</h2>
+            <h2 class="font-semibold text-3xl text-gray-800 leading-tight">Concessions</h2>
         </template>
 
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-semibold">Concession List</h3>
-                    <a
-                        :href="route('concessions.create')" 
-                        class="bg-blue-500 text-white px-4 py-2 rounded">
-                        Add New Concession
-                    </a>
-                </div>
-                                
-                <div v-if="!concessions.length" class="text-center">
-                    <p class="text-gray-900">Loading concessions...</p>
-                </div>
+                <div class="bg-white shadow-sm rounded-lg overflow-hidden">
+                    <div class="p-6">
+                        <div class="flex justify-end mb-4">
+                        <a
+                            :href="route('concessions.create')" 
+                            class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                            Add New Concession
+                        </a>
 
-                <div v-else>
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6 text-gray-900">
-                            
-                            <table class="min-w-full table-auto">
-                                <thead>
-                                    <tr>
-                                        <th class="px-4 py-2">Name</th>
-                                        <th class="px-4 py-2">Price</th>
-                                        <th class="px-4 py-2">Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr v-for="concession in concessions" :key="concession.id">
-                                        <td class="border px-4 py-2">{{ concession.name }}</td>
-                                        <td class="border px-4 py-2">Rs.{{ concession.price }}</td>
-                                        <td class="border px-4 py-2">
-                                            <a :href="route('concessions.edit', concession.id)" class="text-blue-500">
-                                                Edit
-                                            </a>
-                                            |
-                                            <button @click="deleteConcession(concession.id)" class="text-red-500 ml-2">
-                                                Delete
-                                            </button>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
                         </div>
+                                        
+                        <div v-if="concessions.length == 0" class="text-center text-gray-500">
+                            No concessions available.
+                        </div>
+
+                        <table v-else class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-50">
+                                <tr>
+                                    <th style="text-align: left;" class="px-6 py-3 text-sm font-bold text-gray-500 uppercase tracking-wider">#</th>
+                                    <th style="text-align: left;" class="px-6 py-3 text-sm font-bold text-gray-500 uppercase tracking-wider">Concession ID</th>
+                                    <th style="text-align: left;" class="px-6 py-3 text-sm font-bold text-gray-500 uppercase tracking-wider">Name</th>
+                                    <th style="text-align: left;" class="px-6 py-3 text-sm font-bold text-gray-500 uppercase tracking-wider">Price</th>
+                                    <th style="text-align: left;" class="px-6 py-3 text-sm font-bold text-gray-500 uppercase tracking-wider">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-200">
+                                <tr v-for="(concession, index) in concessions" :key="concession.id">
+                                    <td class="px-6 py-4 whitespace-nowrap text-left text-sm font-medium text-gray-900">{{ index + 1 }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-left text-sm font-medium text-gray-900">{{ concession.id }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-gray-500">{{ concession.name }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-gray-500">Rs.{{ concession.price }}</td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-gray-500">
+                                        <a :href="route('concessions.edit', concession.id)" class="text-blue-500">
+                                            Edit
+                                        </a>
+                                        |
+                                        <button @click="deleteConcession(concession.id)" class="text-red-500 ml-2">
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -70,11 +71,6 @@ export default {
     },
 
     methods: {
-        deleteConcession(id) {
-            if (confirm('Are you sure you want to delete this concession?')) {
-                this.$inertia.delete(route('concessions.destroy', id));
-            }
-        },
         async deleteConcession(id) {
             const result = await Swal.fire({
                 title: 'Are you sure?',
