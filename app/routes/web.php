@@ -34,6 +34,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/{concession}/edit', [ConcessionController::class, 'edit'])->name('edit');
         Route::post('/{concession}', [ConcessionController::class, 'update'])->name('update');
         Route::delete('/{concession}', [ConcessionController::class, 'destroy'])->name('destroy');
+        Route::get('/{concession}', [ConcessionController::class, 'show'])->name('show');
     });
 
     Route::prefix('orders')->name('orders.')->group(function () {

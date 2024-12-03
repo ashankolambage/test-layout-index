@@ -73,6 +73,19 @@ class ConcessionController extends Controller
         ]);
     }
 
+    public function show($id)
+    {
+        $concession = $this->concessionRepository->findById($id);
+
+        if (!$concession) {
+            return response()->json(['error' => 'Concession not found!'], 404);
+        }
+
+        return inertia('Concessions/Show', [
+            'concession' => $concession,
+        ]);
+    }
+
     public function update(Request $request, $id)
     {
         try {

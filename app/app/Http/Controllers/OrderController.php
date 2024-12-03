@@ -169,10 +169,13 @@ class OrderController extends Controller
     {
         $status = $request->query('status');
 
+        $sortBy = 'send_to_kitchen_time';
+        $sortDirection = 'asc';
+
         if ($status) {
-            $orders = $this->orderRepository->getAll(['status' => $status]);
+            $orders = $this->orderRepository->getAll(['status' => $status], $sortBy, $sortDirection);
         } else {
-            $orders = $this->orderRepository->getAll();
+            $orders = $this->orderRepository->getAll([], $sortBy, $sortDirection);
         }
     
         return response()->json([
