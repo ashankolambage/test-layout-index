@@ -101,7 +101,7 @@ export default {
                     if (error.response) {
                         this.$toast.fire({
                             icon: 'error',
-                            title: error.response.data.error || 'An unknown error occurred.',
+                            title: error.response.data.message || 'An unknown error occurred.',
                         });
                     } else {
                         this.$toast.fire({

@@ -90,8 +90,11 @@ export default {
     methods: {
       async fetchOrders() {
             try {
-                const response = await axios.get(route('orders.fetch'));
-                this.orders = response.data.orders;
+                const response = await axios.post(route('orders.fetch'), {
+                    status: ""
+                });
+
+                this.orders = response.data.data.orders;
             } catch (error) {
                 console.error("Error fetching orders:", error);
             }
@@ -162,7 +165,7 @@ export default {
               if (error.response) {
                     this.$toast.fire({
                         icon: 'error',
-                        title: error.response.data.error || 'An unknown error occurred.',
+                        title: error.response.data.message || 'An unknown error occurred.',
                     });
               } else {
                   this.$toast.fire({

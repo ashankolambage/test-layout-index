@@ -16,6 +16,5 @@ class ProcessKitchenOrder
     public function handle(OrderSentToKitchen $event): void
     {
         $order = $event->order;
-        Log::info("Order {$order->id} sent to kitchen at {$order->send_to_kitchen_time}.");
     }
 }

@@ -76,7 +76,7 @@ export default {
 
                 formData.append('name', this.form.name);
                 formData.append('description', this.form.description);
-                formData.append('new_image', this.form.new_image ?? '');
+                formData.append('image', this.form.new_image ?? '');
                 formData.append('price', this.form.price);
 
                 const response = await axios.post(`/concessions/${this.concession.id}`, formData, {
@@ -96,12 +96,12 @@ export default {
                     this.errors = error.response.data.errors;
                     this.$toast.fire({
                         icon: 'error',
-                        title: error.response.data.error,
+                        title: 'Validation failed!',
                     });
                 } else if (error.response) {
                     this.$toast.fire({
                         icon: 'error',
-                        title: error.response.data.error || 'An unknown error occurred.',
+                        title: error.response.data.message || 'An unknown error occurred.',
                     });
                 } else {
                     this.$toast.fire({
