@@ -18,6 +18,10 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+
+        \App\Events\OrderSentToKitchen::class => [
+            \App\Listeners\ProcessKitchenOrder::class,
+        ],
     ];
 
     /**

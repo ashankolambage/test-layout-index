@@ -20,11 +20,12 @@
                             <div>
                                 <label for="description" class="block font-semibold">Description</label>
                                 <textarea v-model="form.description" id="description" class="w-full border px-4 py-2"></textarea>
+                                <span v-if="errors.description" class="text-red-500 text-sm">{{ errors.description[0] }}</span>
                             </div>
 
                             <div>
                                 <label for="image" class="block font-semibold">Image</label>
-                                <input type="file" @change="handleImageUpload" id="image" class="w-full border px-4 py-2" required>
+                                <input type="file" @change="handleImageUpload" id="image" class="w-full border px-4 py-2" >
                                 <span v-if="errors.image" class="text-red-500 text-sm">{{ errors.image[0] }}</span>
                             </div>
 
@@ -90,16 +91,16 @@ export default {
 
                 this.$inertia.visit(route('concessions.index'));
             } catch (error) {
-                if (error.response && error.response.status === 422 && error.response.data.errors) {
-                    this.errors = error.response.data.errors;
+                if (error.response && error.response.status === 422) {
+                    this.errors = error.response.data.errors || {};
                     this.$toast.fire({
                         icon: 'error',
-                        title: error.response.data.error,
+                        title: 'Validation failed!',
                     });
                 } else if (error.response) {
                     this.$toast.fire({
                         icon: 'error',
-                        title: error.response.data.error || 'An unknown error occurred.',
+                        title: error.response.data.message || 'An unknown error occurred.',
                     });
                 } else {
                     this.$toast.fire({

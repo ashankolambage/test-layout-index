@@ -14,12 +14,16 @@ class OrderRepository implements OrderRepositoryInterface
         $this->model = $order;
     }
 
-    public function getAll(array $filters = [])
+    public function getAll(array $filters = [], $sortBy = null, $sortDirection = 'asc')
     {
-        $query = $this->model->query();
+        $query = $this->model->newQuery();
 
-        if (isset($filters['status'])) {
-            $query->where('status', $filters['status']);
+        foreach ($filters as $key => $value) {
+            $query->where($key, $value);
+        }
+
+        if ($sortBy) {
+            $query->orderBy($sortBy, $sortDirection);
         }
 
         return $query->get();

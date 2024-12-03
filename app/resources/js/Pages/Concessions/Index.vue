@@ -40,6 +40,10 @@
                                     <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-gray-500">{{ concession.name }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-gray-500">Rs.{{ concession.price }}</td>
                                     <td class="px-6 py-4 whitespace-nowrap text-left text-sm text-gray-500">
+                                        <a :href="route('concessions.show', concession.id)" class="text-green-500">
+                                            View
+                                        </a>
+                                        |
                                         <a :href="route('concessions.edit', concession.id)" class="text-blue-500">
                                             Edit
                                         </a>
@@ -97,7 +101,7 @@ export default {
                     if (error.response) {
                         this.$toast.fire({
                             icon: 'error',
-                            title: error.response.data.error || 'An unknown error occurred.',
+                            title: error.response.data.message || 'An unknown error occurred.',
                         });
                     } else {
                         this.$toast.fire({

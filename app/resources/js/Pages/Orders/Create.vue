@@ -146,14 +146,20 @@ export default {
                     this.errors = error.response.data.errors || {};
                     this.$toast.fire({
                         icon: 'error',
-                        title: error.response.data.message || 'Validation error',
+                        title: 'Validation error',
+                    });
+                } else if (error.response) {
+                    this.$toast.fire({
+                        icon: 'error',
+                        title: error.response.data.message || 'An unknown error occurred.',
                     });
                 } else {
                     this.$toast.fire({
                         icon: 'error',
-                        title: 'Error creating order',
+                        title: 'An unknown error occurred. Please try again.',
                     });
                 }
+                console.error(error);
             }
         },
     },
