@@ -3,6 +3,16 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-9X4VHHBYYF"></script>
+        <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-9X4VHHBYYF');
+        </script>
 
         <title inertia>{{ config('app.name', 'Laravel') }}</title>
 
